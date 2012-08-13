@@ -24,3 +24,27 @@ Describe "Immutable Object" {
         }
     }
 }
+
+function Convert-ByFilter($values, $predicate) {
+    return $values | where { & $predicate $_ }
+}
+
+Describe "Higher Order Functions" {
+    $values = @(1, 2, 3, 4)
+
+    It "Should filter even" {
+        $evenPredicate = { param($value) return $value % 2 -eq 0 }
+        $even = Convert-ByFilter $values $evenPredicate
+        $even.Length.Should.Be(2)
+        $even[0].Should.Be(2)
+        $even[1].Should.Be(4)
+    }
+
+    It "Should filter odd" {
+        $oddPredicate = { param($value) return $value % 2 -eq 1 }
+        $odd = Convert-ByFilter $values $oddPredicate
+        $odd.Length.Should.Be(2)
+        $odd[0].Should.Be(1)
+        $odd[1].Should.Be(3)
+    }
+}
