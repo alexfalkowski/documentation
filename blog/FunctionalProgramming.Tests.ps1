@@ -48,3 +48,12 @@ Describe "Higher Order Functions" {
         $odd[1].Should.Be(3)
     }
 }
+
+Describe "Currying" {
+    It "Should add two values via currying" {
+        $add = { param($x) return { param($y) return $x + $y }.GetNewClosure() }
+        $addFive = & $add 5
+        $ten = & $addFive 5
+        $ten.Should.Be(10)
+    }
+}
