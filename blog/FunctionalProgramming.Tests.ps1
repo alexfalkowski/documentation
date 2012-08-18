@@ -50,10 +50,38 @@ Describe "Higher Order Functions" {
 }
 
 Describe "Currying" {
-    It "Should add two values via currying" {
+    It "Should add two values via annonymous functions" {
         $add = { param($x) return { param($y) return $x + $y }.GetNewClosure() }
         $addFive = & $add 5
         $ten = & $addFive 5
         $ten.Should.Be(10)
+
+        $ten = & (& $add 5) 5
+        $ten.Should.Be(10)
+    }
+
+    It "Should add two values via named functions" {
+        function add($x) { return { param($y) return $y + $x }.GetNewClosure() }
+        $addFive = add 5
+
+        $ten = & $addFive 5
+        $ten.Should.Be(10)
+
+        $ten = & (add 5) 5
+        $ten.Should.Be(10)
+    }
+}
+
+Describe "Lazy" {
+    $function = [System.Func[string]] { return "test" }
+    $lazy = New-Object System.Lazy[string] $function
+
+    It "Should not have a value evaluated" {
+        $lazy.IsValueCreated.Should.Be($false)
+    }
+
+    It "Should get lazy value" {
+        $lazy.Value.Should.Be("test")
+        $lazy.IsValueCreated.Should.Be($true)
     }
 }
