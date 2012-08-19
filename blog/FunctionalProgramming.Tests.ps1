@@ -72,9 +72,15 @@ Describe "Currying" {
     }
 }
 
+function New-Lazy($script) {
+    $function = [System.Func[object]] $script
+    $lazy = New-Object System.Lazy[object] $function
+
+    return $lazy
+}
+
 Describe "Lazy" {
-    $function = [System.Func[string]] { return "test" }
-    $lazy = New-Object System.Lazy[string] $function
+    $lazy = New-Lazy { return "test" }
 
     It "Should not have a value evaluated" {
         $lazy.IsValueCreated.Should.Be($false)
@@ -83,5 +89,60 @@ Describe "Lazy" {
     It "Should get lazy value" {
         $lazy.Value.Should.Be("test")
         $lazy.IsValueCreated.Should.Be($true)
+    }
+}
+
+Describe "Pattern Matching" {
+    It "Should use a simple switch" {
+        $a = 5
+        $result = switch ($a) { 
+            1 {"The colour is red."} 
+            2 {"The colour is blue."} 
+            3 {"The colour is green."} 
+            4 {"The colour is yellow."} 
+            5 {"The colour is orange."} 
+            6 {"The colour is purple."} 
+            7 {"The colour is pink."}
+            8 {"The colour is brown."} 
+            default {"The colour could not be determined."}
+        }
+
+        $result.Should.Be("The colour is orange.") 
+    }
+
+    It "Should use a wildcard switch" {
+        $a = "d14151"
+
+        $result = switch -wildcard ($a) { 
+            "a*" {"The colour is red."} 
+            "b*" {"The colour is blue."} 
+            "c*" {"The colour is green."} 
+            "d*" {"The colour is yellow."} 
+            "e*" {"The colour is orange."} 
+            "f*" {"The colour is purple."} 
+            "g*" {"The colour is pink."}
+            "h*" {"The colour is brown."} 
+            default {"The colour could not be determined."}
+        }
+
+        $result.Should.Be("The colour is yellow.") 
+    }
+
+    It "Should use a regex switch" {
+        $a = "r14151"
+
+        $result = switch -regex ($a) { 
+            "[a-d]" {"The colour is red."} 
+            "[e-g]" {"The colour is blue."} 
+            "[h-k]" {"The colour is green."} 
+            "[l-o]" {"The colour is yellow."} 
+            "[p-s]" {"The colour is orange."} 
+            "[t-v]" {"The colour is purple."} 
+            "[w-y]" {"The colour is pink."}
+            "[z]" {"The colour is brown."} 
+            default {"The colour could not be determined."}
+        }
+
+        $result.Should.Be("The colour is orange.") 
     }
 }
