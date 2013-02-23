@@ -8,6 +8,8 @@ blog
 
 This folder contains documents that I create to be part of my blog. I like to use [LibreOffice](http://www.libreoffice.org/) as it is portable and I don't have to pay for it.
 
+The blog is located at [blogger](http://alexfalkowski.blogspot.com.au/)
+ 
 resume
 ------
 
